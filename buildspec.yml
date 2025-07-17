@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  variables:
+    API_ID: "6caghr1jg0"
+    STAGE: "dev"
+    REGION: "us-east-1"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing dependencies...
+      - npm install -g @openapitools/openapi-generator-cli
+      - cd frontend
+      - npm install
+      - cd ..
+
+  pre_build:
+    commands:
+      - echo Export OpenAPI spec from API Gateway...
+      - aws apigateway get-export --rest-api-id $API_ID --stage-name $STAGE --export-type oas30 --accepts application/json openapi.json
+      - ls -l openapi.json
+
+  build:
+    commands:
+      - echo Build frontend app...
+      - cd frontend
+      - npm run build
+      - cd ..
+
+artifacts:
+  files:
+    - frontend/build/**/*
