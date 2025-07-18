@@ -48,7 +48,7 @@ function generateTestFile(path, operation, operationId) {
 // Parse openapi.json và tạo test
 Object.keys(openapi.paths).forEach((path) => {
   Object.keys(openapi.paths[path]).forEach((operation) => {
-    const operationId = openapi.paths[path][operation].operationId || `${operation}_${path.replace(/\//g, '_')}`;
+    const operationId = openapi.paths[path][operation].operationId || `${operation}${path.replace(/[^a-zA-Z0-9]/g, '')}`;
     generateTestFile(path, operation, operationId);
   });
 });
