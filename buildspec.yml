@@ -24,7 +24,7 @@ phases:
       - echo Generating TypeScript Axios client from OpenAPI spec...
       - openapi-generator-cli generate -i openapi.json -g typescript-axios -o frontend/src/api
       - echo Generating Jest test files from OpenAPI spec...
-      - node generate-tests.js
+      - node generate-test.js
 
   build:
     commands:
