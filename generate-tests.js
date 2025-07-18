@@ -1,11 +1,16 @@
 const fs = require('fs');
-const path = require('path');
 
-// Đọc openapi.json
-const openapi = JSON.parse(fs.readFileSync('openapi.json', 'utf-8'));
+// Kiểm tra và đọc openapi.json
+let openapi;
+try {
+  openapi = JSON.parse(fs.readFileSync('openapi.json', 'utf-8'));
+} catch (error) {
+  console.error('Error: openapi.json not found or invalid. Please export it from API Gateway first.');
+  process.exit(1);
+}
 
 // Thư mục đầu ra cho các file test
-const outputDir = path.join('frontend', 'src', '__tests__', 'api');
+const outputDir = 'frontend/src/__tests__/api';
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
@@ -41,7 +46,7 @@ function generateTestFile(path, operation, operationId) {
     });
   });
   `;
-  const testFilePath = path.join(outputDir, `${operationId}.test.ts`);
+  const testFilePath = outputDir + '/' + `${operationId}.test.ts`; // Nối chuỗi thủ công
   fs.writeFileSync(testFilePath, testContent);
 }
 
