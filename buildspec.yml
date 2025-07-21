@@ -13,7 +13,7 @@ phases:
       - npm install -g @openapitools/openapi-generator-cli
       - cd frontend
       - npm install
-      - npm install --save-dev axios-mock-adapter jest ts-jest @types/jest identity-obj-proxy
+      - npm install --save-dev axios-mock-adapter jest ts-jest @types/jest identity-obj-proxy ts-node
       - cd ..
 
   pre_build:
