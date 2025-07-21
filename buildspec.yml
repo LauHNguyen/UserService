@@ -24,29 +24,34 @@ phases:
         import type { Config } from 'jest';
 
         const config: Config = {
-          preset: 'ts-jest',
+          preset: 'ts-jest/presets/default-esm',
           testEnvironment: 'jsdom',
           moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
           testMatch: ['**/__tests__/**/*.test.ts?(x)'],
           transform: {
             '^.+\\\\.(ts|tsx)$': 'ts-jest',
           },
-          transformIgnorePatterns: [
-            'node_modules/(?!(axios)/)',
-          ],
+          transformIgnorePatterns: ['node_modules/(?!(axios)/)'],
           collectCoverage: true,
           coverageDirectory: 'coverage',
           moduleNameMapper: {
             '\\\\.\\(css|less|scss)$': 'identity-obj-proxy',
             '\\\\.\\(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
           },
+          extensionsToTreatAsEsm: ['.ts', '.tsx'],
         };
 
         export default config;
         EOF
+
       - echo Writing fileMock.js...
       - mkdir -p frontend/__mocks__
       - echo "module.exports = 'test-file-stub';" > frontend/__mocks__/fileMock.js
+
+      - echo Writing package.json type:module...
+      - cd frontend
+      - jq '. + {"type":"module"}' package.json > tmp.$$.json && mv tmp.$$.json package.json
+      - cd ..
 
       - echo Export OpenAPI spec from API Gateway...
       - aws apigateway get-export --rest-api-id $API_ID --stage-name $STAGE --export-type oas30 --accepts application/json openapi.json
