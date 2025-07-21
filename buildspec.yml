@@ -26,6 +26,11 @@ phases:
         const config: Config = {
           preset: 'ts-jest',
           testEnvironment: 'jsdom',
+          testEnvironmentOptions: {
+            html: '<!doctype html><html><body></body></html>',
+            url: 'http://localhost/',
+            userAgent: 'Node.js'
+          },
           moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
           testMatch: ['**/__tests__/**/*.test.ts?(x)'],
           transform: {
