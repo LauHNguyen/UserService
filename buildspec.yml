@@ -69,7 +69,7 @@ phases:
     commands:
       - echo Running frontend tests with coverage...
       - cd frontend
-      - npm run test -- --coverage
+      - npm run test:jest
       - echo Build frontend app...
       - npm run build
       - cd ..
