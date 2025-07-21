@@ -18,12 +18,10 @@ phases:
 
   pre_build:
     commands:
-      - echo Writing jest.config.ts...
+      - echo Writing jest.config.js...
       - |
-        cat <<EOF > frontend/jest.config.ts
-        import type { Config } from 'jest';
-
-        const config: Config = {
+        cat <<EOF > frontend/jest.config.js
+        module.exports = {
           preset: 'ts-jest',
           testEnvironment: 'jsdom',
           testEnvironmentOptions: {
@@ -44,9 +42,8 @@ phases:
             '\\\\.\\(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
           },
         };
-
-        export default config;
         EOF
+
       - echo Writing fileMock.js...
       - mkdir -p frontend/__mocks__
       - echo "module.exports = 'test-file-stub';" > frontend/__mocks__/fileMock.js
@@ -58,8 +55,10 @@ phases:
           echo "Error: Failed to export openapi.json"
           exit 1
         fi
+
       - echo Generating TypeScript Axios client from OpenAPI spec...
       - openapi-generator-cli generate -i openapi.json -g typescript-axios -o frontend/src/api
+
       - echo Generating Jest test files from OpenAPI spec...
       - node generate-tests.js
 
