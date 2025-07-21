@@ -13,11 +13,41 @@ phases:
       - npm install -g @openapitools/openapi-generator-cli
       - cd frontend
       - npm install
-      - npm install --save-dev axios-mock-adapter
+      - npm install --save-dev axios-mock-adapter jest ts-jest @types/jest identity-obj-proxy
       - cd ..
 
   pre_build:
     commands:
+      - echo Writing jest.config.ts...
+      - |
+        cat <<EOF > frontend/jest.config.ts
+        import type { Config } from 'jest';
+
+        const config: Config = {
+          preset: 'ts-jest',
+          testEnvironment: 'jsdom',
+          moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+          testMatch: ['**/__tests__/**/*.test.ts?(x)'],
+          transform: {
+            '^.+\\\\.(ts|tsx)$': 'ts-jest',
+          },
+          transformIgnorePatterns: [
+            'node_modules/(?!(axios)/)',
+          ],
+          collectCoverage: true,
+          coverageDirectory: 'coverage',
+          moduleNameMapper: {
+            '\\\\.\\(css|less|scss)$': 'identity-obj-proxy',
+            '\\\\.\\(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
+          },
+        };
+
+        export default config;
+        EOF
+      - echo Writing fileMock.js...
+      - mkdir -p frontend/__mocks__
+      - echo "module.exports = 'test-file-stub';" > frontend/__mocks__/fileMock.js
+
       - echo Export OpenAPI spec from API Gateway...
       - aws apigateway get-export --rest-api-id $API_ID --stage-name $STAGE --export-type oas30 --accepts application/json openapi.json
       - |
